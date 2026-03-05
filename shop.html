@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LUXE — Premium Shopping</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --cream: #F9F5EF;
+    --bone: #EDE8DF;
+    --warm-gray: #C4BBB0;
+    --taupe: #8A7F72;
+    --charcoal: #2C2825;
+    --black: #1A1714;
+    --accent: #B8860B;
+    --accent-light: #D4A017;
+    --white: #FFFFFF;
+    --red: #C0392B;
+    --green: #27AE60;
+    --shadow: 0 4px 30px rgba(44,40,37,0.08);
+    --shadow-lg: 0 20px 60px rgba(44,40,37,0.15);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--charcoal);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── NAVBAR ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    background: rgba(249,245,239,0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--bone);
+    padding: 0 40px;
+    height: 72px;
+    display: flex; align-items: center; justify-content: space-between;
+    transition: box-shadow 0.3s;
+  }
+  nav.scrolled { box-shadow: var(--shadow); }
+
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px; font-weight: 600; letter-spacing: 4px;
+    color: var(--black); cursor: pointer; text-decoration: none;
+  }
+  .nav-logo span { color: var(--accent); }
+
+  .nav-links {
+    display: flex; align-items: center; gap: 8px;
+    list-style: none;
+  }
+  .nav-links a {
+    font-size: 13px; font-weight: 500; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--taupe);
+    text-decoration: none; padding: 8px 14px; border-radius: 6px;
+    transition: all 0.2s; white-space: nowrap;
+  }
+  .nav-links a:hover, .nav-links a.active { color: var(--black); background: var(--bone); }
+
+  .nav-right { display: flex; align-items: center; gap: 12px; }
+  .search-bar {
+    display: flex; align-items: center;
+    background: var(--bone); border-radius: 100px;
+    padding: 8px 16px; gap: 8px;
+    transition: all 0.3s;
+    border: 1px solid transparent;
+  }
+  .search-bar:focus-within { background: var(--white); border-color: var(--warm-gray); box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+  .search-bar input {
+    border: none; background: transparent; outline: none;
+    font-family: 'DM Sans', sans-serif; font-size: 13px;
+    color: var(--charcoal); width: 200px;
+  }
+  .search-bar input::placeholder { color: var(--warm-gray); }
+  .search-icon { color: var(--taupe); font-size: 16px; cursor: pointer; }
+
+  .cart-btn {
+    position: relative;
+    background: var(--black); color: var(--white);
+    border: none; border-radius: 100px; cursor: pointer;
+    padding: 10px 20px; font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 500; letter-spacing: 0.5px;
+    transition: all 0.2s; display: flex; align-items: center; gap: 8px;
+  }
+  .cart-btn:hover { background: var(--accent); transform: translateY(-1px); }
+  .cart-count {
+    background: var(--accent); color: var(--white);
+    border-radius: 50%; width: 18px; height: 18px;
+    font-size: 10px; display: flex; align-items: center; justify-content: center;
+    font-weight: 700;
+  }
+
+  /* ── PAGES ── */
+  .page { display: none; padding-top: 72px; min-height: 100vh; }
+  .page.active { display: block; animation: fadeIn 0.4s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ── HERO ── */
+  .hero {
+    height: calc(100vh - 72px);
+    display: grid; grid-template-columns: 1fr 1fr;
+    overflow: hidden;
+  }
+  .hero-text {
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 80px 80px 80px 80px;
+    background: linear-gradient(135deg, var(--cream) 0%, var(--bone) 100%);
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--bone); border: 1px solid var(--warm-gray);
+    border-radius: 100px; padding: 6px 16px;
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--taupe); margin-bottom: 32px; width: fit-content;
+  }
+  .hero-badge::before { content: '✦'; color: var(--accent); font-size: 8px; }
+  .hero h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(52px, 5vw, 80px); font-weight: 300; line-height: 1.05;
+    color: var(--black); margin-bottom: 24px;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); }
+  .hero p {
+    font-size: 16px; color: var(--taupe); line-height: 1.7;
+    max-width: 380px; margin-bottom: 48px; font-weight: 300;
+  }
+  .hero-btns { display: flex; gap: 16px; align-items: center; }
+  .btn-primary {
+    background: var(--black); color: var(--white);
+    border: none; border-radius: 100px; cursor: pointer;
+    padding: 16px 36px; font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 500; letter-spacing: 1px;
+    text-transform: uppercase; transition: all 0.3s;
+  }
+  .btn-primary:hover { background: var(--accent); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(184,134,11,0.3); }
+  .btn-ghost {
+    background: transparent; color: var(--charcoal);
+    border: 1px solid var(--warm-gray); border-radius: 100px; cursor: pointer;
+    padding: 16px 36px; font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 500; letter-spacing: 1px;
+    text-transform: uppercase; transition: all 0.3s;
+  }
+  .btn-ghost:hover { border-color: var(--black); color: var(--black); }
+
+  .hero-visual {
+    background: var(--charcoal);
+    position: relative; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .hero-visual-bg {
+    position: absolute; inset: 0;
+    background: 
+      radial-gradient(ellipse at 70% 30%, rgba(184,134,11,0.15) 0%, transparent 60%),
+      radial-gradient(ellipse at 30% 70%, rgba(184,134,11,0.08) 0%, transparent 60%);
+  }
+  .hero-visual-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+    padding: 60px; position: relative; z-index: 1; width: 100%;
+  }
+  .hero-card {
+    border-radius: 16px; overflow: hidden;
+    aspect-ratio: 3/4; position: relative;
+    cursor: pointer; transition: transform 0.3s;
+  }
+  .hero-card:hover { transform: scale(1.02); }
+  .hero-card:nth-child(2) { margin-top: 40px; }
+  .hero-card-img {
+    width: 100%; height: 100%; object-fit: cover;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 64px; background: var(--bone);
+  }
+  .hero-card-label {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: linear-gradient(transparent, rgba(26,23,20,0.85));
+    color: var(--white); padding: 30px 16px 16px;
+    font-size: 13px; font-weight: 500;
+  }
+
+  /* ── SECTION ── */
+  .section { padding: 80px 80px; }
+  .section-header {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    margin-bottom: 48px;
+  }
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 44px; font-weight: 300; color: var(--black);
+    line-height: 1.1;
+  }
+  .section-title em { font-style: italic; color: var(--accent); }
+  .section-subtitle {
+    font-size: 13px; color: var(--taupe); letter-spacing: 1px;
+    text-transform: uppercase; margin-bottom: 8px;
+  }
+  .see-all {
+    font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--taupe); text-decoration: none; border-bottom: 1px solid var(--warm-gray);
+    padding-bottom: 2px; cursor: pointer; transition: all 0.2s; white-space: nowrap; margin-bottom: 8px;
+  }
+  .see-all:hover { color: var(--black); border-color: var(--black); }
+
+  /* ── CATEGORIES ── */
+  .categories-grid {
+    display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px;
+  }
+  .category-card {
+    background: var(--white); border-radius: 16px;
+    padding: 28px 16px; text-align: center; cursor: pointer;
+    border: 1px solid transparent; transition: all 0.3s;
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+  }
+  .category-card:hover { border-color: var(--accent); transform: translateY(-4px); box-shadow: var(--shadow); }
+  .category-icon { font-size: 36px; line-height: 1; }
+  .category-name { font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--charcoal); }
+  .category-count { font-size: 11px; color: var(--warm-gray); }
+
+  /* ── PRODUCTS GRID ── */
+  .products-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;
+  }
+  .products-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .products-grid.cols-5 { grid-template-columns: repeat(5, 1fr); }
+
+  .product-card {
+    background: var(--white); border-radius: 20px;
+    overflow: hidden; cursor: pointer;
+    border: 1px solid var(--bone); transition: all 0.3s;
+    position: relative;
+  }
+  .product-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+
+  .product-badge {
+    position: absolute; top: 16px; left: 16px; z-index: 2;
+    background: var(--accent); color: var(--white);
+    font-size: 10px; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase; padding: 4px 10px; border-radius: 100px;
+  }
+  .product-badge.new { background: var(--black); }
+  .product-badge.sale { background: var(--red); }
+
+  .wishlist-btn {
+    position: absolute; top: 16px; right: 16px; z-index: 2;
+    background: var(--white); border: none; border-radius: 50%;
+    width: 36px; height: 36px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; transition: all 0.2s; opacity: 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+  .product-card:hover .wishlist-btn { opacity: 1; }
+  .wishlist-btn:hover { background: var(--red); }
+  .wishlist-btn.active { opacity: 1; }
+
+  .product-img {
+    width: 100%; aspect-ratio: 1;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 80px; background: var(--bone);
+    transition: transform 0.4s;
+  }
+  .product-card:hover .product-img { transform: scale(1.05); }
+
+  .product-info { padding: 20px; }
+  .product-category {
+    font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--warm-gray); margin-bottom: 6px;
+  }
+  .product-name {
+    font-size: 15px; font-weight: 500; color: var(--charcoal);
+    margin-bottom: 8px; line-height: 1.3;
+  }
+  .product-rating {
+    display: flex; align-items: center; gap: 6px;
+    margin-bottom: 12px;
+  }
+  .stars { color: var(--accent); font-size: 12px; }
+  .rating-count { font-size: 11px; color: var(--warm-gray); }
+  .product-bottom { display: flex; align-items: center; justify-content: space-between; }
+  .product-price { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; color: var(--black); }
+  .product-price .old-price { font-size: 14px; color: var(--warm-gray); text-decoration: line-through; margin-right: 8px; font-family: 'DM Sans', sans-serif; }
+  .add-btn {
+    background: var(--black); color: var(--white);
+    border: none; border-radius: 100px; cursor: pointer;
+    padding: 8px 16px; font-size: 12px; font-weight: 500;
+    transition: all 0.2s; letter-spacing: 0.5px;
+  }
+  .add-btn:hover { background: var(--accent); }
+
+  /* ── BANNER ── */
+  .promo-banner {
+    margin: 0 80px 80px;
+    background: var(--black); border-radius: 28px;
+    padding: 80px; position: relative; overflow: hidden;
+    display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 60px;
+  }
+  .promo-banner::before {
+    content: ''; position: absolute; top: -100px; right: -100px;
+    width: 500px; height: 500px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(184,134,11,0.2) 0%, transparent 70%);
+  }
+  .promo-banner::after {
+    content: ''; position: absolute; bottom: -80px; left: 200px;
+    width: 300px; height: 300px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(184,134,11,0.1) 0%, transparent 70%);
+  }
+  .promo-content { position: relative; z-index: 1; }
+  .promo-tag {
+    display: inline-block; background: var(--accent);
+    color: var(--white); font-size: 11px; font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase;
+    padding: 6px 16px; border-radius: 100px; margin-bottom: 24px;
+  }
+  .promo-banner h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 56px; font-weight: 300; color: var(--white);
+    line-height: 1.05; margin-bottom: 16px;
+  }
+  .promo-banner h2 em { font-style: italic; color: var(--accent-light); }
+  .promo-banner p { color: var(--warm-gray); font-size: 15px; line-height: 1.6; margin-bottom: 36px; max-width: 360px; }
+  .promo-visual {
+    position: relative; z-index: 1;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  }
+  .promo-item {
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px; padding: 20px; text-align: center;
+    transition: all 0.3s; cursor: pointer;
+  }
+  .promo-item:hover { background: rgba(255,255,255,0.1); transform: scale(1.02); }
+  .promo-item-emoji { font-size: 40px; display: block; margin-bottom: 8px; }
+  .promo-item-name { color: var(--white); font-size: 13px; font-weight: 500; }
+  .promo-item-price { color: var(--accent-light); font-family: 'Cormorant Garamond', serif; font-size: 18px; }
+
+  /* ── SEARCH RESULTS ── */
+  .search-results-header {
+    padding: 40px 80px 0;
+    border-bottom: 1px solid var(--bone); margin-bottom: 40px; padding-bottom: 32px;
+  }
+  .search-results-header h2 {
+    font-family: 'Cormorant Garamond', serif; font-size: 36px; font-weight: 300;
+    margin-bottom: 8px;
+  }
+  .search-results-header p { color: var(--taupe); font-size: 14px; }
+  .search-results-content { padding: 0 80px 80px; }
+
+  /* ── SUB PAGE ── */
+  .subpage-hero {
+    height: 300px; position: relative;
+    display: flex; align-items: flex-end;
+    overflow: hidden;
+    margin-bottom: 0;
+  }
+  .subpage-hero-bg {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 200px; opacity: 0.06;
+  }
+  .subpage-hero-content {
+    position: relative; z-index: 1;
+    padding: 60px 80px; width: 100%;
+  }
+  .subpage-hero-tag {
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 12px;
+  }
+  .subpage-hero h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 64px; font-weight: 300; color: var(--black); line-height: 1;
+  }
+  .subpage-hero h1 em { font-style: italic; }
+  .subpage-hero p { color: var(--taupe); font-size: 16px; margin-top: 12px; }
+
+  .filters {
+    padding: 24px 80px; background: var(--white);
+    border-top: 1px solid var(--bone); border-bottom: 1px solid var(--bone);
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 48px;
+  }
+  .filter-label { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--warm-gray); margin-right: 8px; }
+  .filter-chip {
+    background: var(--bone); border: 1px solid transparent; border-radius: 100px;
+    padding: 8px 18px; font-size: 12px; font-weight: 500; color: var(--charcoal);
+    cursor: pointer; transition: all 0.2s;
+  }
+  .filter-chip:hover, .filter-chip.active { background: var(--black); color: var(--white); }
+
+  /* ── CART ── */
+  .cart-page { padding: 40px 80px 80px; }
+  .cart-page h1 { font-family: 'Cormorant Garamond', serif; font-size: 48px; font-weight: 300; margin-bottom: 40px; }
+  .cart-layout { display: grid; grid-template-columns: 1fr 380px; gap: 40px; }
+  .cart-items { display: flex; flex-direction: column; gap: 16px; }
+  .cart-item {
+    background: var(--white); border-radius: 16px; padding: 24px;
+    display: flex; align-items: center; gap: 20px;
+    border: 1px solid var(--bone);
+  }
+  .cart-item-img {
+    width: 80px; height: 80px; border-radius: 12px;
+    background: var(--bone); display: flex; align-items: center;
+    justify-content: center; font-size: 40px; flex-shrink: 0;
+  }
+  .cart-item-info { flex: 1; }
+  .cart-item-name { font-weight: 500; margin-bottom: 4px; }
+  .cart-item-cat { font-size: 12px; color: var(--warm-gray); }
+  .cart-item-price { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; }
+  .qty-ctrl {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--bone); border-radius: 100px; padding: 6px 14px;
+  }
+  .qty-btn {
+    background: none; border: none; cursor: pointer;
+    font-size: 18px; color: var(--charcoal); line-height: 1; padding: 0 4px;
+    transition: color 0.2s;
+  }
+  .qty-btn:hover { color: var(--accent); }
+  .qty-num { font-weight: 600; min-width: 20px; text-align: center; }
+  .remove-btn {
+    background: none; border: none; cursor: pointer;
+    color: var(--warm-gray); font-size: 18px; transition: color 0.2s; padding: 4px;
+  }
+  .remove-btn:hover { color: var(--red); }
+  .cart-summary {
+    background: var(--white); border-radius: 20px; padding: 32px;
+    border: 1px solid var(--bone); height: fit-content; position: sticky; top: 88px;
+  }
+  .cart-summary h3 { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 400; margin-bottom: 28px; }
+  .summary-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 0; border-bottom: 1px solid var(--bone); font-size: 14px; color: var(--taupe);
+  }
+  .summary-row.total {
+    font-size: 18px; font-weight: 600; color: var(--black); border-bottom: none;
+    margin-top: 8px; padding-top: 20px;
+  }
+  .summary-row.total span:last-child { font-family: 'Cormorant Garamond', serif; font-size: 28px; }
+  .checkout-btn {
+    width: 100%; background: var(--black); color: var(--white);
+    border: none; border-radius: 100px; cursor: pointer;
+    padding: 18px; font-family: 'DM Sans', sans-serif;
+    font-size: 14px; font-weight: 500; letter-spacing: 1px;
+    text-transform: uppercase; margin-top: 24px; transition: all 0.3s;
+  }
+  .checkout-btn:hover { background: var(--accent); transform: translateY(-2px); }
+  .cart-empty {
+    text-align: center; padding: 120px 40px; grid-column: 1/-1;
+  }
+  .cart-empty-icon { font-size: 80px; display: block; margin-bottom: 24px; }
+  .cart-empty h2 { font-family: 'Cormorant Garamond', serif; font-size: 40px; font-weight: 300; margin-bottom: 12px; }
+  .cart-empty p { color: var(--taupe); margin-bottom: 32px; }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed; bottom: 32px; right: 32px; z-index: 9999;
+    background: var(--black); color: var(--white);
+    padding: 16px 24px; border-radius: 100px;
+    font-size: 14px; font-weight: 500;
+    transform: translateY(100px); opacity: 0;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex; align-items: center; gap: 10px;
+    pointer-events: none;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast-icon { font-size: 18px; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--black); padding: 80px 80px 40px;
+    margin-top: 80px;
+  }
+  .footer-grid {
+    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 60px; margin-bottom: 60px;
+  }
+  .footer-brand { }
+  .footer-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px; font-weight: 600; letter-spacing: 4px;
+    color: var(--white); margin-bottom: 16px;
+  }
+  .footer-logo span { color: var(--accent); }
+  .footer-desc { color: var(--taupe); font-size: 14px; line-height: 1.7; max-width: 280px; margin-bottom: 32px; }
+  .footer-socials { display: flex; gap: 12px; }
+  .social-btn {
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px; width: 40px; height: 40px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; cursor: pointer; transition: all 0.2s;
+  }
+  .social-btn:hover { background: var(--accent); border-color: var(--accent); }
+  .footer-col h4 {
+    color: var(--white); font-size: 12px; letter-spacing: 2px;
+    text-transform: uppercase; margin-bottom: 20px;
+  }
+  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+  .footer-col a {
+    color: var(--taupe); font-size: 14px; text-decoration: none; transition: color 0.2s;
+  }
+  .footer-col a:hover { color: var(--white); }
+  .footer-bottom {
+    border-top: 1px solid rgba(255,255,255,0.08); padding-top: 32px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .footer-bottom p { color: var(--taupe); font-size: 13px; }
+
+  /* ── PRODUCT MODAL ── */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 2000;
+    background: rgba(26,23,20,0.6); backdrop-filter: blur(4px);
+    display: flex; align-items: center; justify-content: center; padding: 40px;
+    opacity: 0; pointer-events: none; transition: all 0.3s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal {
+    background: var(--cream); border-radius: 28px; max-width: 800px; width: 100%;
+    display: grid; grid-template-columns: 1fr 1fr; overflow: hidden;
+    transform: scale(0.9) translateY(20px); transition: all 0.3s cubic-bezier(0.34, 1.2, 0.64, 1);
+    max-height: 90vh;
+  }
+  .modal-overlay.open .modal { transform: scale(1) translateY(0); }
+  .modal-img {
+    background: var(--bone); display: flex; align-items: center;
+    justify-content: center; font-size: 120px; padding: 40px;
+  }
+  .modal-info { padding: 48px 40px; overflow-y: auto; }
+  .modal-category { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+  .modal-name { font-family: 'Cormorant Garamond', serif; font-size: 34px; font-weight: 400; line-height: 1.2; margin-bottom: 16px; }
+  .modal-rating { display: flex; align-items: center; gap: 8px; margin-bottom: 24px; font-size: 14px; color: var(--taupe); }
+  .modal-desc { font-size: 14px; color: var(--taupe); line-height: 1.7; margin-bottom: 28px; }
+  .modal-price { font-family: 'Cormorant Garamond', serif; font-size: 40px; font-weight: 600; color: var(--black); margin-bottom: 32px; }
+  .modal-actions { display: flex; gap: 12px; }
+  .modal-add-btn {
+    flex: 1; background: var(--black); color: var(--white);
+    border: none; border-radius: 100px; cursor: pointer;
+    padding: 16px; font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 500; letter-spacing: 1px;
+    text-transform: uppercase; transition: all 0.3s;
+  }
+  .modal-add-btn:hover { background: var(--accent); }
+  .modal-close {
+    position: absolute; top: 20px; right: 20px;
+    background: var(--white); border: none; border-radius: 50%;
+    width: 40px; height: 40px; font-size: 20px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s; box-shadow: var(--shadow);
+  }
+  .modal-close:hover { background: var(--red); color: var(--white); }
+  .modal-wrapper { position: relative; }
+
+  /* no results */
+  .no-results { text-align: center; padding: 80px; grid-column: 1/-1; }
+  .no-results-icon { font-size: 64px; margin-bottom: 20px; display: block; }
+  .no-results h3 { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 300; color: var(--taupe); }
+
+  @media (max-width: 1200px) {
+    .categories-grid { grid-template-columns: repeat(3, 1fr); }
+    .products-grid { grid-template-columns: repeat(3, 1fr); }
+    .hero-visual-grid { grid-template-columns: 1fr; }
+    .hero-card:nth-child(2) { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <a class="nav-logo" onclick="showPage('home')" style="cursor:pointer">LUX<span>E</span></a>
+  <ul class="nav-links">
+    <li><a onclick="showPage('home')" class="active" id="nav-home">Home</a></li>
+    <li><a onclick="showPage('fashion')" id="nav-fashion">Fashion</a></li>
+    <li><a onclick="showPage('tech')" id="nav-tech">Tech & Gadgets</a></li>
+    <li><a onclick="showPage('home-appliances')" id="nav-home-appliances">Home Appliances</a></li>
+    <li><a onclick="showPage('beauty')" id="nav-beauty">Beauty</a></li>
+    <li><a onclick="showPage('sports')" id="nav-sports">Sports</a></li>
+    <li><a onclick="showPage('books')" id="nav-books">Books & Art</a></li>
+  </ul>
+  <div class="nav-right">
+    <div class="search-bar">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="globalSearch" placeholder="Search everything..." oninput="handleSearch(this.value)" onkeydown="if(event.key==='Enter') doSearch()">
+    </div>
+    <button class="cart-btn" onclick="showPage('cart')">
+      🛍️ Cart <span class="cart-count" id="cartCount">0</span>
+    </button>
+  </div>
+</nav>
+
+<!-- ═══════════════ HOME PAGE ═══════════════ -->
+<div class="page active" id="page-home">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-text">
+      <div class="hero-badge">New Season 2026</div>
+      <h1>Shop the <em>Finest</em><br>Collection</h1>
+      <p>Discover curated products across fashion, technology, home living, beauty, and beyond — all in one exquisite destination.</p>
+      <div class="hero-btns">
+        <button class="btn-primary" onclick="scrollTo({top:document.getElementById('featured').offsetTop-80,behavior:'smooth'})">Explore Now</button>
+        <button class="btn-ghost" onclick="showPage('fashion')">View Fashion →</button>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-visual-bg"></div>
+      <div class="hero-visual-grid">
+        <div class="hero-card" onclick="showPage('fashion')">
+          <div class="hero-card-img">👗</div>
+          <div class="hero-card-label">Fashion & Clothing</div>
+        </div>
+        <div class="hero-card" onclick="showPage('tech')">
+          <div class="hero-card-img">💻</div>
+          <div class="hero-card-label">Tech & Gadgets</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CATEGORIES -->
+  <section class="section">
+    <div class="section-header">
+      <div>
+        <div class="section-subtitle">Browse By</div>
+        <div class="section-title">All <em>Categories</em></div>
+      </div>
+    </div>
+    <div class="categories-grid">
+      <div class="category-card" onclick="showPage('fashion')">
+        <div class="category-icon">👗</div>
+        <div class="category-name">Fashion</div>
+        <div class="category-count">240+ items</div>
+      </div>
+      <div class="category-card" onclick="showPage('tech')">
+        <div class="category-icon">💻</div>
+        <div class="category-name">Tech</div>
+        <div class="category-count">180+ items</div>
+      </div>
+      <div class="category-card" onclick="showPage('home-appliances')">
+        <div class="category-icon">🏠</div>
+        <div class="category-name">Home</div>
+        <div class="category-count">320+ items</div>
+      </div>
+      <div class="category-card" onclick="showPage('beauty')">
+        <div class="category-icon">💄</div>
+        <div class="category-name">Beauty</div>
+        <div class="category-count">150+ items</div>
+      </div>
+      <div class="category-card" onclick="showPage('sports')">
+        <div class="category-icon">⚽</div>
+        <div class="category-name">Sports</div>
+        <div class="category-count">200+ items</div>
+      </div>
+      <div class="category-card" onclick="showPage('books')">
+        <div class="category-icon">📚</div>
+        <div class="category-name">Books & Art</div>
+        <div class="category-count">500+ items</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURED PRODUCTS -->
+  <section class="section" id="featured" style="padding-top:0">
+    <div class="section-header">
+      <div>
+        <div class="section-subtitle">Hand-picked</div>
+        <div class="section-title">Featured <em>Products</em></div>
+      </div>
+      <a class="see-all" onclick="doSearch('')">See All →</a>
+    </div>
+    <div class="products-grid" id="featuredGrid"></div>
+  </section>
+
+  <!-- PROMO BANNER -->
+  <div class="promo-banner">
+    <div class="promo-content">
+      <span class="promo-tag">✦ Limited Offer</span>
+      <h2>Up to <em>50% Off</em><br>Tech Essentials</h2>
+      <p>Premium gadgets, smart home devices, and the latest tech — all at unbeatable prices for a limited time.</p>
+      <button class="btn-primary" onclick="showPage('tech')" style="background:var(--accent)">Shop Tech Sale</button>
+    </div>
+    <div class="promo-visual">
+      <div class="promo-item" onclick="openModal(getProductById('tech-1'))">
+        <span class="promo-item-emoji">📱</span>
+        <div class="promo-item-name">Smartphone</div>
+        <div class="promo-item-price">$699</div>
+      </div>
+      <div class="promo-item" onclick="openModal(getProductById('tech-2'))">
+        <span class="promo-item-emoji">🎧</span>
+        <div class="promo-item-name">Headphones</div>
+        <div class="promo-item-price">$199</div>
+      </div>
+      <div class="promo-item" onclick="openModal(getProductById('tech-3'))">
+        <span class="promo-item-emoji">⌚</span>
+        <div class="promo-item-name">Smart Watch</div>
+        <div class="promo-item-price">$349</div>
+      </div>
+      <div class="promo-item" onclick="openModal(getProductById('tech-4'))">
+        <span class="promo-item-emoji">💻</span>
+        <div class="promo-item-name">Laptop</div>
+        <div class="promo-item-price">$1,299</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRENDING -->
+  <section class="section" style="padding-top:0">
+    <div class="section-header">
+      <div>
+        <div class="section-subtitle">Right Now</div>
+        <div class="section-title"><em>Trending</em> Picks</div>
+      </div>
+    </div>
+    <div class="products-grid cols-5" id="trendingGrid"></div>
+  </section>
+
+</div>
+
+<!-- ═══════════════ SEARCH PAGE ═══════════════ -->
+<div class="page" id="page-search">
+  <div class="search-results-header">
+    <h2 id="searchTitle">Search Results</h2>
+    <p id="searchSubtitle"></p>
+  </div>
+  <div class="search-results-content">
+    <div class="products-grid" id="searchGrid"></div>
+  </div>
+</div>
+
+<!-- ═══════════════ FASHION PAGE ═══════════════ -->
+<div class="page" id="page-fashion">
+  <div class="subpage-hero" style="background: linear-gradient(135deg, #F9F3EC 0%, #EDE3D6 100%);">
+    <div class="subpage-hero-bg">👗</div>
+    <div class="subpage-hero-content">
+      <div class="subpage-hero-tag">✦ New Season</div>
+      <h1>Fashion & <em>Clothing</em></h1>
+      <p>Curated styles for every occasion — from casual chic to luxury formal.</p>
+    </div>
+  </div>
+  <div class="filters">
+    <span class="filter-label">Filter:</span>
+    <div class="filter-chip active" onclick="filterProducts('fashion', null, this)">All</div>
+    <div class="filter-chip" onclick="filterProducts('fashion', 'women', this)">Women</div>
+    <div class="filter-chip" onclick="filterProducts('fashion', 'men', this)">Men</div>
+    <div class="filter-chip" onclick="filterProducts('fashion', 'accessories', this)">Accessories</div>
+    <div class="filter-chip" onclick="filterProducts('fashion', 'footwear', this)">Footwear</div>
+  </div>
+  <div class="section" style="padding-top:0">
+    <div class="products-grid" id="fashionGrid"></div>
+  </div>
+</div>
+
+<!-- ═══════════════ TECH PAGE ═══════════════ -->
+<div class="page" id="page-tech">
+  <div class="subpage-hero" style="background: linear-gradient(135deg, #ECEEF5 0%, #DDE0EE 100%);">
+    <div class="subpage-hero-bg">💻</div>
+    <div class="subpage-hero-content">
+      <div class="subpage-hero-tag">✦ Latest Models</div>
+      <h1>Tech & <em>Gadgets</em></h1>
+      <p>The latest in smartphones, laptops, wearables, and smart home technology.</p>
+    </div>
+  </div>
+  <div class="filters">
+    <span class="filter-label">Filter:</span>
+    <div class="filter-chip active" onclick="filterProducts('tech', null, this)">All</div>
+    <div class="filter-chip" onclick="filterProducts('tech', 'phones', this)">Phones</div>
+    <div class="filter-chip" onclick="filterProducts('tech', 'laptops', this)">Laptops</div>
+    <div class="filter-chip" onclick="filterProducts('tech', 'audio', this)">Audio</div>
+    <div class="filter-chip" onclick="filterProducts('tech', 'wearables', this)">Wearables</div>
+    <div class="filter-chip" onclick="filterProducts('tech', 'smarthome', this)">Smart Home</div>
+  </div>
+  <div class="section" style="padding-top:0">
+    <div class="products-grid" id="techGrid"></div>
+  </div>
+</div>
+
+<!-- ═══════════════ HOME APPLIANCES PAGE ═══════════════ -->
+<div class="page" id="page-home-appliances">
+  <div class="subpage-hero" style="background: linear-gradient(135deg, #EFF5EE 0%, #DCF0DA 100%);">
+    <div class="subpage-hero-bg">🏠</div>
+    <div class="subpage-hero-content">
+      <div class="subpage-hero-tag">✦ For Your Space</div>
+      <h1>Home <em>Appliances</em></h1>
+      <p>Everything to make your home smarter, more comfortable, and more beautiful.</p>
+    </div>
+  </div>
+  <div class="filters">
+    <span class="filter-label">Filter:</span>
+    <div class="filter-chip active" onclick="filterProducts('home-appliances', null, this)">All</div>
+    <div class="filter-chip" onclick="filterProducts('home-appliances', 'kitchen', this)">Kitchen</div>
+    <div class="filter-chip" onclick="filterProducts('home-appliances', 'cleaning', this)">Cleaning</div>
+    <div class="filter-chip" onclick="filterProducts('home-appliances', 'comfort', this)">Comfort</div>
+    <div class="filter-chip" onclick="filterProducts('home-appliances', 'laundry', this)">Laundry</div>
+  </div>
+  <div class="section" style="padding-top:0">
+    <div class="products-grid" id="home-appliancesGrid"></div>
+  </div>
+</div>
+
+<!-- ═══════════════ BEAUTY PAGE ═══════════════ -->
+<div class="page" id="page-beauty">
+  <div class="subpage-hero" style="background: linear-gradient(135deg, #F9EDF5 0%, #F0D8EA 100%);">
+    <div class="subpage-hero-bg">💄</div>
+    <div class="subpage-hero-content">
+      <div class="subpage-hero-tag">✦ Glow Up</div>
+      <h1>Beauty & <em>Wellness</em></h1>
+      <p>Premium skincare, makeup, fragrances, and wellness essentials.</p>
+    </div>
+  </div>
+  <div class="filters">
+    <span class="filter-label">Filter:</span>
+    <div class="filter-chip active" onclick="filterProducts('beauty', null, this)">All</div>
+    <div class="filter-chip" onclick="filterProducts('beauty', 'skincare', this)">Skincare</div>
+    <div class="filter-chip" onclick="filterProducts('beauty', 'makeup', this)">Makeup</div>
+    <div class="filter-chip" onclick="filterProducts('beauty', 'fragrance', this)">Fragrance</div>
+    <div class="filter-chip" onclick="filterProducts('beauty', 'wellness', this)">Wellness</div>
+  </div>
+  <div class="section" style="padding-top:0">
+    <div class="products-grid" id="beautyGrid"></div>
+  </div>
+</div>
+
+<!-- ═══════════════ SPORTS PAGE ═══════════════ -->
+<div class="page" id="page-sports">
+  <div class="subpage-hero" style="background: linear-gradient(135deg, #EEF5F9 0%, #D8EAF0 100%);">
+    <div class="subpage-hero-bg">⚽</div>
+    <div class="subpage-hero-content">
+      <div class="subpage-hero-tag">✦ Stay Active</div>
+      <h1>Sports & <em>Fitness</em></h1>
+      <p>Premium gear for every sport — from professional equipment to everyday fitness essentials.</p>
+    </div>
+  </div>
+  <div class="filters">
+    <span class="filter-label">Filter:</span>
+    <div class="filter-chip active" onclick="filterProducts('sports', null, this)">All</div>
+    <div class="filter-chip" onclick="filterProducts('sports', 'fitness', this)">Fitness</div>
+    <div class="filter-chip" onclick="filterProducts('sports', 'outdoor', this)">Outdoor</div>
+    <div class="filter-chip" onclick="filterProducts('sports', 'team', this)">Team Sports</div>
+    <div class="filter-chip" onclick="filterProducts('sports', 'apparel', this)">Apparel</div>
+  </div>
+  <div class="section" style="padding-top:0">
+    <div class="products-grid" id="sportsGrid"></div>
+  </div>
+</div>
+
+<!-- ═══════════════ BOOKS PAGE ═══════════════ -->
+<div class="page" id="page-books">
+  <div class="subpage-hero" style="background: linear-gradient(135deg, #F5F2EB 0%, #ECE6D4 100%);">
+    <div class="subpage-hero-bg">📚</div>
+    <div class="subpage-hero-content">
+      <div class="subpage-hero-tag">✦ Feed Your Mind</div>
+      <h1>Books & <em>Art</em></h1>
+      <p>Bestsellers, rare finds, art supplies, and stationery for the creative soul.</p>
+    </div>
+  </div>
+  <div class="filters">
+    <span class="filter-label">Filter:</span>
+    <div class="filter-chip active" onclick="filterProducts('books', null, this)">All</div>
+    <div class="filter-chip" onclick="filterProducts('books', 'fiction', this)">Fiction</div>
+    <div class="filter-chip" onclick="filterProducts('books', 'nonfiction', this)">Non-Fiction</div>
+    <div class="filter-chip" onclick="filterProducts('books', 'art', this)">Art Supplies</div>
+    <div class="filter-chip" onclick="filterProducts('books', 'stationery', this)">Stationery</div>
+  </div>
+  <div class="section" style="padding-top:0">
+    <div class="products-grid" id="booksGrid"></div>
+  </div>
+</div>
+
+<!-- ═══════════════ CART PAGE ═══════════════ -->
+<div class="page" id="page-cart">
+  <div class="cart-page">
+    <h1>Your Cart 🛍️</h1>
+    <div class="cart-layout" id="cartLayout"></div>
+  </div>
+</div>
+
+<!-- PRODUCT MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalIfOutside(event)">
+  <div class="modal-wrapper">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal" id="modalContent"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span class="toast-icon">✓</span>
+  <span id="toastMsg">Added to cart!</span>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="footer-logo">LUX<span>E</span></div>
+      <p class="footer-desc">Your one-stop premium shopping destination. Curated quality across every category, delivered with care.</p>
+      <div class="footer-socials">
+        <div class="social-btn">𝕏</div>
+        <div class="social-btn">📘</div>
+        <div class="social-btn">📸</div>
+        <div class="social-btn">▶️</div>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Shop</h4>
+      <ul>
+        <li><a onclick="showPage('fashion')">Fashion</a></li>
+        <li><a onclick="showPage('tech')">Tech & Gadgets</a></li>
+        <li><a onclick="showPage('home-appliances')">Home Appliances</a></li>
+        <li><a onclick="showPage('beauty')">Beauty</a></li>
+        <li><a onclick="showPage('sports')">Sports</a></li>
+        <li><a onclick="showPage('books')">Books & Art</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Account</h4>
+      <ul>
+        <li><a href="#">Sign In</a></li>
+        <li><a href="#">Create Account</a></li>
+        <li><a onclick="showPage('cart')">My Cart</a></li>
+        <li><a href="#">Wishlist</a></li>
+        <li><a href="#">Order History</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Support</h4>
+      <ul>
+        <li><a href="#">Help Center</a></li>
+        <li><a href="#">Returns</a></li>
+        <li><a href="#">Shipping Info</a></li>
+        <li><a href="#">Contact Us</a></li>
+        <li><a href="#">Privacy Policy</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 LUXE Shopping. All rights reserved.</p>
+    <p>🔒 Secure payments · Free returns · 24/7 Support</p>
+  </div>
+</footer>
+
+<script>
+// ═══ DATA ═══
+const allProducts = [
+  // FASHION
+  {id:'fashion-1', cat:'fashion', sub:'women', emoji:'👗', name:'Silk Evening Gown', brand:'Maison Belle', price:480, oldPrice:650, rating:4.8, reviews:234, desc:'A luxurious silk evening gown with hand-stitched details. Perfect for galas, weddings, or any special occasion.', badge:'sale'},
+  {id:'fashion-2', cat:'fashion', sub:'women', emoji:'👜', name:'Leather Tote Bag', brand:'Aria Milano', price:320, rating:4.9, reviews:189, desc:'Full-grain Italian leather tote with gold hardware. Spacious, elegant and built to last a lifetime.', badge:'new'},
+  {id:'fashion-3', cat:'fashion', sub:'men', emoji:'🧥', name:'Cashmere Overcoat', brand:'Nordic & Co.', price:595, oldPrice:720, rating:4.7, reviews:142, desc:'Premium cashmere blend overcoat. Timeless design meets luxurious warmth.', badge:'sale'},
+  {id:'fashion-4', cat:'fashion', sub:'footwear', emoji:'👠', name:'Stiletto Heels', brand:'Lumière', price:260, rating:4.6, reviews:98, desc:'Hand-crafted stilettos with cushioned insole. Available in 12 colors.'},
+  {id:'fashion-5', cat:'fashion', sub:'accessories', emoji:'🕶️', name:'Aviator Sunglasses', brand:'Sun Studio', price:180, rating:4.8, reviews:305, desc:'UV400 polarized lenses in a classic aviator frame. Lightweight titanium build.', badge:'new'},
+  {id:'fashion-6', cat:'fashion', sub:'men', emoji:'👔', name:'Oxford Dress Shirt', brand:'Bespoke Co.', price:145, rating:4.5, reviews:267, desc:'Egyptian cotton Oxford shirt with mother-of-pearl buttons. Slim and regular fit available.'},
+  {id:'fashion-7', cat:'fashion', sub:'accessories', emoji:'⌚', name:'Woven Silk Scarf', brand:'Aria Milano', price:95, rating:4.7, reviews:78, desc:'100% pure silk scarf with artisanal print. A timeless accessory for every wardrobe.'},
+  {id:'fashion-8', cat:'fashion', sub:'footwear', emoji:'👟', name:'Leather Sneakers', brand:'Urban Step', price:220, rating:4.9, reviews:412, desc:'Minimalist leather sneakers with memory foam insole. Dressed up or casual, always perfect.', badge:'new'},
+
+  // TECH
+  {id:'tech-1', cat:'tech', sub:'phones', emoji:'📱', name:'ProMax 16 Smartphone', brand:'Apex Mobile', price:699, oldPrice:899, rating:4.9, reviews:1204, desc:'6.7" OLED display, 200MP camera system, 5G capable, and all-day battery life. The pinnacle of mobile technology.', badge:'sale'},
+  {id:'tech-2', cat:'tech', sub:'audio', emoji:'🎧', name:'Studio Noise-Cancel Headphones', brand:'SoundLab', price:199, rating:4.8, reviews:876, desc:'40-hour battery, active noise cancellation, and Hi-Res audio certification. The last headphones you will ever need.'},
+  {id:'tech-3', cat:'tech', sub:'wearables', emoji:'⌚', name:'SmartWatch Pro X', brand:'WristTech', price:349, oldPrice:429, rating:4.7, reviews:543, desc:'Health monitoring, GPS, sleep tracking, and 7-day battery. Compatible with iOS & Android.', badge:'sale'},
+  {id:'tech-4', cat:'tech', sub:'laptops', emoji:'💻', name:'UltraBook 14 Slim', brand:'Apex Compute', price:1299, rating:4.9, reviews:389, desc:'M3 chip, 16GB RAM, 1TB SSD. 18-hour battery life in a 1.1kg chassis.', badge:'new'},
+  {id:'tech-5', cat:'tech', sub:'smarthome', emoji:'🔊', name:'Smart Speaker Hub', brand:'EchoSphere', price:129, rating:4.6, reviews:721, desc:'360° room-filling sound, built-in AI assistant, and smart home control center.'},
+  {id:'tech-6', cat:'tech', sub:'phones', emoji:'📷', name:'Mirrorless Camera', brand:'LensKing', price:849, rating:4.8, reviews:234, desc:'30MP full-frame sensor, 8K video, and in-body stabilization. Professional results in a compact body.', badge:'new'},
+  {id:'tech-7', cat:'tech', sub:'wearables', emoji:'🎮', name:'VR Headset Pro', brand:'VisionX', price:499, rating:4.5, reviews:167, desc:'4K per eye resolution, 120Hz refresh rate, and standalone operation. The future of entertainment.'},
+  {id:'tech-8', cat:'tech', sub:'audio', emoji:'🎵', name:'True Wireless Earbuds', brand:'SoundLab', price:159, oldPrice:199, rating:4.8, reviews:932, desc:'6mm drivers, adaptive ANC, 30-hour total playtime, IPX5 water resistant.', badge:'sale'},
+
+  // HOME APPLIANCES
+  {id:'home-1', cat:'home-appliances', sub:'kitchen', emoji:'☕', name:'Espresso Machine Pro', brand:'Barista+', price:599, rating:4.9, reviews:445, desc:'15-bar professional espresso machine with built-in grinder, steam wand, and programmable settings.', badge:'new'},
+  {id:'home-2', cat:'home-appliances', sub:'cleaning', emoji:'🤖', name:'Robot Vacuum X7', brand:'CleanBot', price:349, oldPrice:450, rating:4.7, reviews:783, desc:'AI-powered mapping, auto-empty dock, 180-min runtime. Cleans so you don\'t have to.', badge:'sale'},
+  {id:'home-3', cat:'home-appliances', sub:'kitchen', emoji:'🍳', name:'Smart Air Fryer 6L', brand:'ChefPro', price:189, rating:4.8, reviews:612, desc:'Rapid air technology, 12 preset programs, and WiFi-connected app control. Healthy cooking made easy.'},
+  {id:'home-4', cat:'home-appliances', sub:'comfort', emoji:'❄️', name:'Smart Air Purifier', brand:'PureAir', price:279, rating:4.6, reviews:334, desc:'HEPA H13 filter, real-time air quality display, whisper-quiet operation. Covers 800 sq ft.'},
+  {id:'home-5', cat:'home-appliances', sub:'kitchen', emoji:'🥣', name:'Stand Mixer Pro', brand:'KitchenArt', price:449, rating:4.9, reviews:567, desc:'800W motor, 10-speed settings, 5.5L bowl with tilt-head design. Built for serious bakers.', badge:'new'},
+  {id:'home-6', cat:'home-appliances', sub:'laundry', emoji:'👕', name:'Steam Washer 9kg', brand:'LaundryPure', price:699, rating:4.7, reviews:245, desc:'Steam wash technology, 15 programs, A+++ energy rating, and ultra-quiet 1400rpm spin.'},
+  {id:'home-7', cat:'home-appliances', sub:'comfort', emoji:'💨', name:'Bladeless Tower Fan', brand:'BreezeX', price:219, rating:4.5, reviews:198, desc:'10 airflow settings, sleep timer, remote control, and ultra-quiet 25dB operation.'},
+  {id:'home-8', cat:'home-appliances', sub:'kitchen', emoji:'🧊', name:'French Door Refrigerator', brand:'CoolMaster', price:1249, oldPrice:1599, rating:4.8, reviews:189, desc:'570L capacity, triple cooling zones, smart temperature control, and built-in water dispenser.', badge:'sale'},
+
+  // BEAUTY
+  {id:'beauty-1', cat:'beauty', sub:'skincare', emoji:'🧴', name:'Vitamin C Serum', brand:'GlowLab', price:78, rating:4.9, reviews:1245, desc:'20% stabilized Vitamin C, hyaluronic acid, and niacinamide. Visible brightening in 2 weeks.', badge:'new'},
+  {id:'beauty-2', cat:'beauty', sub:'makeup', emoji:'💄', name:'Matte Lipstick Set', brand:'Velvet Rouge', price:48, rating:4.7, reviews:689, desc:'12 curated shades in long-lasting matte formula. Transfer-proof and ultra-comfortable.'},
+  {id:'beauty-3', cat:'beauty', sub:'fragrance', emoji:'🌸', name:'Floral Eau de Parfum', brand:'Maison Scent', price:165, rating:4.8, reviews:342, desc:'A symphony of rose, jasmine, and sandalwood. 100ml, 8-hour lasting power.', badge:'new'},
+  {id:'beauty-4', cat:'beauty', sub:'skincare', emoji:'🧼', name:'Retinol Night Cream', brand:'DermLux', price:92, oldPrice:120, rating:4.8, reviews:523, desc:'0.5% encapsulated retinol with peptides and ceramides. Wake up to visibly younger skin.', badge:'sale'},
+  {id:'beauty-5', cat:'beauty', sub:'wellness', emoji:'🕯️', name:'Aromatherapy Candle Set', brand:'Serenity', price:58, rating:4.6, reviews:234, desc:'Set of 4 soy wax candles: Lavender, Eucalyptus, Vanilla, and Sandalwood. 40-hour burn each.'},
+  {id:'beauty-6', cat:'beauty', sub:'makeup', emoji:'🎨', name:'Eyeshadow Palette', brand:'Velvet Rouge', price:62, rating:4.9, reviews:891, desc:'24 highly-pigmented shades across matte, shimmer, and glitter finishes.', badge:'new'},
+  {id:'beauty-7', cat:'beauty', sub:'skincare', emoji:'🌿', name:'Hyaluronic Acid Moisturizer', brand:'GlowLab', price:54, rating:4.7, reviews:467, desc:'Triple-weight hyaluronic acid with ceramides. 72-hour hydration, non-comedogenic formula.'},
+  {id:'beauty-8', cat:'beauty', sub:'wellness', emoji:'🛁', name:'Luxury Bath Set', brand:'Spa Ritual', price:85, oldPrice:110, rating:4.8, reviews:312, desc:'Includes: bath salts, body scrub, bath bombs, and botanical shower gel. The ultimate self-care kit.', badge:'sale'},
+
+  // SPORTS
+  {id:'sports-1', cat:'sports', sub:'fitness', emoji:'🏋️', name:'Adjustable Dumbbell Set', brand:'IronCore', price:299, rating:4.9, reviews:567, desc:'5-50lbs per dumbbell with quick-change dial system. Replaces 15 pairs of weights.', badge:'new'},
+  {id:'sports-2', cat:'sports', sub:'outdoor', emoji:'🚴', name:'Road Bike Carbon', brand:'VeloElite', price:1499, rating:4.8, reviews:234, desc:'Carbon fiber frame, 22-speed Shimano gears, hydraulic disc brakes. Built for performance.'},
+  {id:'sports-3', cat:'sports', sub:'fitness', emoji:'🧘', name:'Premium Yoga Mat', brand:'Zenith', price:89, rating:4.8, reviews:1023, desc:'6mm natural rubber mat with alignment lines, non-slip surface, and carrying strap.'},
+  {id:'sports-4', cat:'sports', sub:'team', emoji:'⚽', name:'Pro Football', brand:'GameOn', price:79, rating:4.7, reviews:445, desc:'FIFA-quality PU leather football with hand-stitched panels and butyl bladder for optimal retention.'},
+  {id:'sports-5', cat:'sports', sub:'apparel', emoji:'🩱', name:'Compression Running Set', brand:'SwiftMove', price:125, oldPrice:155, rating:4.7, reviews:334, desc:'Moisture-wicking, 4-way stretch fabric with reflective strips. Top + leggings set.', badge:'sale'},
+  {id:'sports-6', cat:'sports', sub:'outdoor', emoji:'⛺', name:'Ultralight Camping Tent', brand:'WildPath', price:349, rating:4.8, reviews:189, desc:'2-person, 4-season tent at just 1.5kg. Setup in 3 minutes. Rated to -20°C.', badge:'new'},
+  {id:'sports-7', cat:'sports', sub:'fitness', emoji:'🏊', name:'Smart Fitness Tracker', brand:'FitPulse', price:179, oldPrice:229, rating:4.6, reviews:712, desc:'Heart rate, SpO2, sleep, and 20 sport modes. 10-day battery, 5ATM waterproof.', badge:'sale'},
+  {id:'sports-8', cat:'sports', sub:'team', emoji:'🏸', name:'Badminton Racket Set', brand:'SmashPro', price:68, rating:4.5, reviews:289, desc:'2 carbon-fiber rackets + 6 feather shuttlecocks + carrying bag. Ideal for all skill levels.'},
+
+  // BOOKS
+  {id:'books-1', cat:'books', sub:'fiction', emoji:'📖', name:'The Midnight Atlas', brand:'Harlow Press', price:24, rating:4.9, reviews:2341, desc:'The year\'s most talked-about novel. A sweeping epic of love, loss, and discovery across three centuries.', badge:'new'},
+  {id:'books-2', cat:'books', sub:'nonfiction', emoji:'📊', name:'The Compound Effect', brand:'Success Media', price:18, rating:4.8, reviews:1876, desc:'A transformative guide to how small, consistent actions lead to extraordinary results over time.'},
+  {id:'books-3', cat:'books', sub:'art', emoji:'🎨', name:'Professional Watercolor Set', brand:'ArtMaster', price:95, rating:4.9, reviews:445, desc:'48 vibrant, lightfast watercolor pans in a foldout tin. Professional grade, perfect for artists of all levels.', badge:'new'},
+  {id:'books-4', cat:'books', sub:'stationery', emoji:'🖊️', name:'Luxury Fountain Pen', brand:'Scribe & Co.', price:145, rating:4.8, reviews:234, desc:'Brass body with 14K gold nib. Includes two ink cartridges. Presented in a gift box.'},
+  {id:'books-5', cat:'books', sub:'fiction', emoji:'🌌', name:'Stars Beyond the Veil', brand:'Nova Books', price:21, oldPrice:27, rating:4.7, reviews:987, desc:'A genre-defying sci-fi thriller that will keep you up until 3am. Over 2 million copies sold.', badge:'sale'},
+  {id:'books-6', cat:'books', sub:'nonfiction', emoji:'🧠', name:'Mind Over Matter', brand:'Clarity Press', price:22, rating:4.8, reviews:1234, desc:'Neuroscientist Dr. Amara Chen\'s groundbreaking guide to rewiring your brain for success and happiness.'},
+  {id:'books-7', cat:'books', sub:'art', emoji:'✏️', name:'Sketching Kit Pro', brand:'ArtMaster', price:68, rating:4.7, reviews:312, desc:'28-piece drawing set: graphite pencils, charcoals, blending tools, and sketchbook. Perfect for beginners to pros.'},
+  {id:'books-8', cat:'books', sub:'stationery', emoji:'📓', name:'Leather Journal (A5)', brand:'Scribe & Co.', price:44, rating:4.9, reviews:678, desc:'Genuine leather cover with premium ivory pages. 240 pages, lay-flat binding, bookmark ribbon.', badge:'new'},
+];
+
+// ═══ STATE ═══
+let cart = [];
+let wishlist = new Set();
+let currentPage = 'home';
+
+// ═══ INIT ═══
+function init() {
+  // Featured: 4 from diff cats
+  const featured = ['fashion-2','tech-4','home-1','beauty-1','sports-2','books-3','tech-1','fashion-8'];
+  renderGrid('featuredGrid', featured.map(id => allProducts.find(p=>p.id===id)).filter(Boolean));
+
+  // Trending: 5 high-rating
+  const trending = [...allProducts].sort((a,b)=>b.reviews-a.reviews).slice(0,5);
+  renderGrid('trendingGrid', trending);
+
+  // Category pages
+  ['fashion','tech','home-appliances','beauty','sports','books'].forEach(cat => {
+    renderGrid(cat+'Grid', allProducts.filter(p=>p.cat===cat));
+  });
+}
+
+function getProductById(id) { return allProducts.find(p=>p.id===id); }
+
+// ═══ RENDER ═══
+function renderGrid(gridId, products) {
+  const grid = document.getElementById(gridId);
+  if (!grid) return;
+  if (!products.length) {
+    grid.innerHTML = `<div class="no-results"><span class="no-results-icon">🔍</span><h3>No products found</h3></div>`;
+    return;
+  }
+  grid.innerHTML = products.map(p => productCard(p)).join('');
+}
+
+function productCard(p) {
+  const inWish = wishlist.has(p.id);
+  return `
+  <div class="product-card" onclick="openModal(allProducts.find(x=>x.id==='${p.id}'))">
+    ${p.badge ? `<div class="product-badge ${p.badge}">${p.badge==='new'?'New':p.badge==='sale'?'Sale':'Hot'}</div>` : ''}
+    <button class="wishlist-btn ${inWish?'active':''}" onclick="event.stopPropagation();toggleWish('${p.id}',this)" title="Wishlist">
+      ${inWish ? '❤️' : '🤍'}
+    </button>
+    <div class="product-img">${p.emoji}</div>
+    <div class="product-info">
+      <div class="product-category">${p.brand}</div>
+      <div class="product-name">${p.name}</div>
+      <div class="product-rating">
+        <span class="stars">${'★'.repeat(Math.floor(p.rating))}${p.rating%1?'½':''}</span>
+        <span class="rating-count">(${p.reviews.toLocaleString()})</span>
+      </div>
+      <div class="product-bottom">
+        <div class="product-price">
+          ${p.oldPrice ? `<span class="old-price">$${p.oldPrice}</span>` : ''}
+          $${p.price}
+        </div>
+        <button class="add-btn" onclick="event.stopPropagation();addToCart('${p.id}')">Add +</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ═══ PAGE NAVIGATION ═══
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+  const el = document.getElementById('page-'+page);
+  if (el) { el.classList.add('active'); window.scrollTo(0,0); }
+  const navEl = document.getElementById('nav-'+page);
+  if (navEl) navEl.classList.add('active');
+  currentPage = page;
+  if (page === 'cart') renderCart();
+}
+
+// ═══ SEARCH ═══
+let searchTimer;
+function handleSearch(val) {
+  clearTimeout(searchTimer);
+  if (!val.trim()) return;
+  searchTimer = setTimeout(() => doSearch(val), 300);
+}
+
+function doSearch(query) {
+  query = query !== undefined ? query : document.getElementById('globalSearch').value;
+  const results = query.trim()
+    ? allProducts.filter(p =>
+        p.name.toLowerCase().includes(query.toLowerCase()) ||
+        p.brand.toLowerCase().includes(query.toLowerCase()) ||
+        p.cat.toLowerCase().includes(query.toLowerCase()) ||
+        (p.desc && p.desc.toLowerCase().includes(query.toLowerCase()))
+      )
+    : allProducts;
+
+  document.getElementById('searchTitle').textContent = query.trim() ? `Results for "${query}"` : 'All Products';
+  document.getElementById('searchSubtitle').textContent = `${results.length} product${results.length!==1?'s':''} found`;
+  renderGrid('searchGrid', results);
+  showPage('search');
+}
+
+// ═══ FILTER ═══
+function filterProducts(cat, sub, chip) {
+  chip.closest('.filters').querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  const products = sub ? allProducts.filter(p=>p.cat===cat && p.sub===sub) : allProducts.filter(p=>p.cat===cat);
+  renderGrid(cat+'Grid', products);
+}
+
+// ═══ MODAL ═══
+function openModal(p) {
+  if (!p) return;
+  document.getElementById('modalContent').innerHTML = `
+    <div class="modal-img">${p.emoji}</div>
+    <div class="modal-info">
+      <div class="modal-category">${p.brand} · ${p.cat.replace('-',' ')}</div>
+      <div class="modal-name">${p.name}</div>
+      <div class="modal-rating">
+        <span style="color:var(--accent)">${'★'.repeat(Math.floor(p.rating))}</span>
+        &nbsp;${p.rating} · ${p.reviews.toLocaleString()} reviews
+      </div>
+      <div class="modal-desc">${p.desc}</div>
+      <div class="modal-price">
+        ${p.oldPrice ? `<span style="font-size:20px;color:var(--warm-gray);text-decoration:line-through;font-family:'DM Sans',sans-serif;margin-right:12px">$${p.oldPrice}</span>` : ''}
+        $${p.price}
+      </div>
+      <div class="modal-actions">
+        <button class="modal-add-btn" onclick="addToCart('${p.id}');closeModal()">Add to Cart 🛍️</button>
+        <button class="wishlist-btn active" style="opacity:1;position:static;width:52px;height:52px;flex-shrink:0" onclick="toggleWish('${p.id}',this)">
+          ${wishlist.has(p.id)?'❤️':'🤍'}
+        </button>
+      </div>
+    </div>`;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+function closeModalIfOutside(e) { if (e.target.id === 'modalOverlay') closeModal(); }
+
+// ═══ CART ═══
+function addToCart(id) {
+  const p = allProducts.find(x=>x.id===id);
+  const existing = cart.find(x=>x.id===id);
+  if (existing) existing.qty++;
+  else cart.push({...p, qty:1});
+  updateCartCount();
+  showToast(`${p.name} added to cart!`);
+}
+
+function updateCartCount() {
+  const total = cart.reduce((s,i)=>s+i.qty,0);
+  document.getElementById('cartCount').textContent = total;
+}
+
+function renderCart() {
+  const layout = document.getElementById('cartLayout');
+  if (!cart.length) {
+    layout.innerHTML = `<div class="cart-empty">
+      <span class="cart-empty-icon">🛍️</span>
+      <h2>Your cart is empty</h2>
+      <p>Discover our curated collections and find something you love.</p>
+      <button class="btn-primary" onclick="showPage('home')">Start Shopping</button>
+    </div>`;
+    return;
+  }
+  const subtotal = cart.reduce((s,i)=>s+i.price*i.qty,0);
+  const shipping = subtotal > 150 ? 0 : 12;
+  const total = subtotal + shipping;
+
+  layout.innerHTML = `
+    <div class="cart-items">
+      ${cart.map(item => `
+        <div class="cart-item" id="cart-item-${item.id}">
+          <div class="cart-item-img">${item.emoji}</div>
+          <div class="cart-item-info">
+            <div class="cart-item-name">${item.name}</div>
+            <div class="cart-item-cat">${item.brand}</div>
+          </div>
+          <div class="qty-ctrl">
+            <button class="qty-btn" onclick="changeQty('${item.id}',-1)">−</button>
+            <span class="qty-num">${item.qty}</span>
+            <button class="qty-btn" onclick="changeQty('${item.id}',1)">+</button>
+          </div>
+          <div class="cart-item-price">$${(item.price*item.qty).toLocaleString()}</div>
+          <button class="remove-btn" onclick="removeFromCart('${item.id}')">🗑</button>
+        </div>`).join('')}
+    </div>
+    <div class="cart-summary">
+      <h3>Order Summary</h3>
+      <div class="summary-row"><span>Subtotal (${cart.reduce((s,i)=>s+i.qty,0)} items)</span><span>$${subtotal.toLocaleString()}</span></div>
+      <div class="summary-row"><span>Shipping</span><span>${shipping===0?'<span style="color:var(--green)">Free</span>':'$'+shipping}</span></div>
+      <div class="summary-row"><span>Tax (8%)</span><span>$${Math.round(subtotal*0.08)}</span></div>
+      <div class="summary-row total"><span>Total</span><span>$${(total + Math.round(subtotal*0.08)).toLocaleString()}</span></div>
+      <button class="checkout-btn" onclick="showToast('Order placed! Thank you 🎉')">Proceed to Checkout</button>
+      ${shipping>0?'<p style="font-size:12px;color:var(--warm-gray);text-align:center;margin-top:12px">Add $'+(150-subtotal)+' more for free shipping</p>':'<p style="font-size:12px;color:var(--green);text-align:center;margin-top:12px">✓ You qualify for free shipping!</p>'}
+    </div>`;
+}
+
+function changeQty(id, delta) {
+  const item = cart.find(x=>x.id===id);
+  if (!item) return;
+  item.qty += delta;
+  if (item.qty <= 0) removeFromCart(id);
+  else { updateCartCount(); renderCart(); }
+}
+
+function removeFromCart(id) {
+  cart = cart.filter(x=>x.id!==id);
+  updateCartCount();
+  renderCart();
+}
+
+// ═══ WISHLIST ═══
+function toggleWish(id, btn) {
+  if (wishlist.has(id)) { wishlist.delete(id); btn.textContent = '🤍'; showToast('Removed from wishlist'); }
+  else { wishlist.add(id); btn.textContent = '❤️'; showToast('Added to wishlist! ❤️'); }
+}
+
+// ═══ TOAST ═══
+let toastTimer;
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 2500);
+}
+
+// ═══ NAVBAR SCROLL ═══
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 20);
+});
+
+// ═══ BOOT ═══
+init();
+</script>
+</body>
+</html>
